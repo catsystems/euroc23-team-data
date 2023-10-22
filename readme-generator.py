@@ -27,23 +27,39 @@ for dir in directories:
         # Create a 'plots' subfolder inside the current directory if it doesn't exist
         plots_folder = os.path.join(base_dir, dir, 'plots')
         os.makedirs(plots_folder, exist_ok=True)
-        
+
+        # Compute adjusted time
+        min_time = log["ts[deciseconds]"].min()
+        adjusted_time = (log["ts[deciseconds]"] - min_time) / 10
+
         # Matplotlib plot for Altitude
-        plt.figure()
-        plt.plot(log["ts[deciseconds]"]/10, log["altitude[m]"])
+        plt.figure(figsize=(8, 6), dpi=300)
+        plt.plot(adjusted_time, log["altitude[m]"])
         plt.title('Altitude vs Time')
         plt.xlabel('Time [s]')
         plt.ylabel('Altitude [m]')
-        plt.savefig(os.path.join(plots_folder, 'altitude_plot.png'))
+        plt.grid(True)
+        # Add vertical lines based on state change
+        for i in range(1, len(log)):
+            if log['state'][i] != log['state'][i-1]:
+                plt.axvline(x=adjusted_time[i], linewidth=1, linestyle='--', color='red')
+        plt.tight_layout()
+        plt.savefig(os.path.join(plots_folder, 'altitude_plot.png'), dpi=300)
         plt.close()
 
         # Matplotlib plot for Velocity
-        plt.figure()
-        plt.plot(log["ts[deciseconds]"]/10, log["velocity[m/s]"])
+        plt.figure(figsize=(8, 6), dpi=300)
+        plt.plot(adjusted_time, log["velocity[m/s]"])
         plt.title('Velocity vs Time')
         plt.xlabel('Time [s]')
         plt.ylabel('Velocity [m/s]')
-        plt.savefig(os.path.join(plots_folder, 'velocity_plot.png'))
+        plt.grid(True)
+        # Add vertical lines based on state change
+        for i in range(1, len(log)):
+            if log['state'][i] != log['state'][i-1]:
+                plt.axvline(x=adjusted_time[i], linewidth=1, linestyle='--', color='red')
+        plt.tight_layout()
+        plt.savefig(os.path.join(plots_folder, 'velocity_plot.png'), dpi=300)
         plt.close()
 
         # Formatting team name
