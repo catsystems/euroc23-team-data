@@ -23,6 +23,8 @@ for dir in directories:
         # Reading data
         file_path = os.path.join(base_dir, dir, file_to_read)
         log = pd.read_csv(file_path)
+        # Take logs only from the first link
+        log = log[log['link'] == 1].reset_index()
         
         # Create a 'plots' subfolder inside the current directory if it doesn't exist
         plots_folder = os.path.join(base_dir, dir, 'plots')
@@ -44,7 +46,7 @@ for dir in directories:
             if log['state'][i] != log['state'][i-1]:
                 plt.axvline(x=adjusted_time[i], linewidth=1, linestyle='--', color='red')
         plt.tight_layout()
-        plt.savefig(os.path.join(plots_folder, 'altitude_plot.png'), dpi=300)
+        plt.savefig(os.path.join(plots_folder, 'altitude.png'), dpi=300)
         plt.close()
 
         # Matplotlib plot for Velocity
@@ -59,7 +61,7 @@ for dir in directories:
             if log['state'][i] != log['state'][i-1]:
                 plt.axvline(x=adjusted_time[i], linewidth=1, linestyle='--', color='red')
         plt.tight_layout()
-        plt.savefig(os.path.join(plots_folder, 'velocity_plot.png'), dpi=300)
+        plt.savefig(os.path.join(plots_folder, 'velocity.png'), dpi=300)
         plt.close()
 
         # Formatting team name
@@ -71,7 +73,7 @@ for dir in directories:
             readme.write(f"# {formatted_team_name}\n")
             readme.write(f"## Flight Statistics\n")
             readme.write(f"Maximum Reached Altitude: {max_altitude} m\n\n")
-            readme.write(f"![Altitude Plot](./plots/altitude_plot.png)\n\n")
-            readme.write(f"![Velocity Plot](./plots/velocity_plot.png)\n\n")
+            readme.write(f"![Altitude Plot](./plots/altitude.png)\n\n")
+            readme.write(f"![Velocity Plot](./plots/velocity.png)\n\n")
 
-print("Process complete!")
+print("Plots generated!")
